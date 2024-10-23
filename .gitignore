@@ -5,4 +5,5 @@
 
 datasets/
 pretrained_models/
+results/
 temp*
