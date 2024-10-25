@@ -38,7 +38,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--weights",
-    default="./pretrained_models/denoising/model_denoising.pth",
+    default="./checkpoints/Denoising/models/continued/model_latest.pth",
     type=str,
     help="Path to weights",
 )

@@ -5,5 +5,6 @@
 
 datasets/
 pretrained_models/
+checkpoints/
 results/
 temp*
