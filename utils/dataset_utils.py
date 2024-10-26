@@ -1,36 +1,49 @@
 import torch
+from torchvision.transforms import functional as F
+import random
+
 
 class Augment_RGB_torch:
     def __init__(self):
         pass
+
     def transform0(self, torch_tensor):
-        return torch_tensor   
+        return torch_tensor
+
     def transform1(self, torch_tensor):
-        torch_tensor = torch.rot90(torch_tensor, k=1, dims=[-1,-2])
+        torch_tensor = torch.rot90(torch_tensor, k=1, dims=[-1, -2])
         return torch_tensor
+
     def transform2(self, torch_tensor):
-        torch_tensor = torch.rot90(torch_tensor, k=2, dims=[-1,-2])
+        torch_tensor = torch.rot90(torch_tensor, k=2, dims=[-1, -2])
         return torch_tensor
+
     def transform3(self, torch_tensor):
-        torch_tensor = torch.rot90(torch_tensor, k=3, dims=[-1,-2])
+        torch_tensor = torch.rot90(torch_tensor, k=3, dims=[-1, -2])
         return torch_tensor
+
     def transform4(self, torch_tensor):
         torch_tensor = torch_tensor.flip(-2)
         return torch_tensor
+
     def transform5(self, torch_tensor):
-        torch_tensor = (torch.rot90(torch_tensor, k=1, dims=[-1,-2])).flip(-2)
+        torch_tensor = (torch.rot90(torch_tensor, k=1, dims=[-1, -2])).flip(-2)
         return torch_tensor
+
     def transform6(self, torch_tensor):
-        torch_tensor = (torch.rot90(torch_tensor, k=2, dims=[-1,-2])).flip(-2)
+        torch_tensor = (torch.rot90(torch_tensor, k=2, dims=[-1, -2])).flip(-2)
         return torch_tensor
+
     def transform7(self, torch_tensor):
-        torch_tensor = (torch.rot90(torch_tensor, k=3, dims=[-1,-2])).flip(-2)
+        torch_tensor = (torch.rot90(torch_tensor, k=3, dims=[-1, -2])).flip(-2)
         return torch_tensor
 
 
 class MixUp_AUG:
     def __init__(self):
-        self.dist = torch.distributions.beta.Beta(torch.tensor([1.2]), torch.tensor([1.2]))
+        self.dist = torch.distributions.beta.Beta(
+            torch.tensor([1.2]), torch.tensor([1.2])
+        )
 
     def aug(self, rgb_gt, rgb_noisy):
         bs = rgb_gt.size(0)
@@ -38,9 +51,24 @@ class MixUp_AUG:
         rgb_gt2 = rgb_gt[indices]
         rgb_noisy2 = rgb_noisy[indices]
 
-        lam = self.dist.rsample((bs,1)).view(-1,1,1,1).cuda()
+        lam = self.dist.rsample((bs, 1)).view(-1, 1, 1, 1).cuda()
 
-        rgb_gt    = lam * rgb_gt + (1-lam) * rgb_gt2
-        rgb_noisy = lam * rgb_noisy + (1-lam) * rgb_noisy2
+        rgb_gt = lam * rgb_gt + (1 - lam) * rgb_gt2
+        rgb_noisy = lam * rgb_noisy + (1 - lam) * rgb_noisy2
 
         return rgb_gt, rgb_noisy
+
+
+def color_jitter(img1: torch.Tensor, img2: torch.Tensor):
+    hue, saturation, contrast, brightness = [random.random() + 0.5 for _ in range(4)]
+
+    img1, img2 = F.adjust_hue(img1, hue), F.adjust_hue(img2, hue)
+    img1, img2 = F.adjust_saturation(img1, saturation), F.adjust_saturation(
+        img2, saturation
+    )
+    img1, img2 = F.adjust_contrast(img1, contrast), F.adjust_contrast(img2, contrast)
+    img1, img2 = F.adjust_brightness(img1, brightness), F.adjust_brightness(
+        img2, brightness
+    )
+
+    return img1, img2
