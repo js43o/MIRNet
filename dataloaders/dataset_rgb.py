@@ -2,7 +2,7 @@ import numpy as np
 import os
 from torch.utils.data import Dataset
 import torch
-from utils import is_png_file, load_img, Augment_RGB_torch
+from utils import is_png_file, load_img, Augment_RGB_torch, color_jitter
 import torch.nn.functional as F
 import random
 
@@ -52,7 +52,9 @@ class DataLoaderTrain(Dataset):
         apply_trans = transforms_aug[random.getrandbits(3)]
 
         clean = getattr(augment, apply_trans)(clean)
-        noisy = getattr(augment, apply_trans)(noisy)        
+        noisy = getattr(augment, apply_trans)(noisy)       
+
+        clean, noisy = color_jitter(clean, noisy)
 
         return clean, noisy, clean_filename, noisy_filename
 

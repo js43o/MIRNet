@@ -61,6 +61,7 @@ class MixUp_AUG:
 
 def color_jitter(img1: torch.Tensor, img2: torch.Tensor):
     hue, saturation, contrast, brightness = [random.random() + 0.5 for _ in range(4)]
+    hue -= 1.0
 
     img1, img2 = F.adjust_hue(img1, hue), F.adjust_hue(img2, hue)
     img1, img2 = F.adjust_saturation(img1, saturation), F.adjust_saturation(
